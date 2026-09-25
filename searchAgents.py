@@ -423,14 +423,16 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     if not foodList:
         return 0  # 终点必须返回 0
 
-    cache = problem.heuristicInfo
-    maxDist = 0
-    for food in foodList:
-        key = (position, food)
-        if key not in cache:
-            cache[key] = mazeDistance(position, food, problem.startingGameState)
-        maxDist = max(maxDist, cache[key])
-    return maxDist
+    def manhattan(a, b):
+        return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+    best = 0
+    for a in foodList:
+        for b in foodList:
+            toFirst = min(manhattan(position, a), manhattan(position, b))
+            value = toFirst + manhattan(a, b)
+            best = max(best, value)
+    return best
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
